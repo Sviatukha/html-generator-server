@@ -1,0 +1,236 @@
+image: node:16
+
+pipelines:
+  branches:
+    'epic/*':
+      - step:
+          name: Build and Test (staging)
+          caches:
+            - node
+          script:
+            - npm install
+            - npm run build:staging
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy Staging to S3
+          script:
+            - BRANCH_NAME=$(echo ${BITBUCKET_BRANCH} | sed "s/\//-/g")
+            - pipe: atlassian/aws-s3-deploy:1.6.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging/nl-editor-module/${BRANCH_NAME}'
+                LOCAL_PATH: 'dist'
+      - step:
+          name: Run cloudfront invalidate
+          script:
+            - BRANCH_NAME=$(echo ${BITBUCKET_BRANCH} | sed "s/\//-/g")
+            - pipe: atlassian/aws-cloudfront-invalidate:0.10.1
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                DISTRIBUTION_ID: 'E3UE766HJW73HA'
+                PATHS: '/build-store-beta/staging/nl-editor-module/${BRANCH_NAME}/assets/remoteEntry.js'
+      - step:
+          name: Clean Dist Directory
+          script:
+            - rm -rf dist/*
+      - step:
+          name: Build and Test (staging-2)
+          caches:
+            - node
+          script:
+            - npm install
+            - npm run build:staging-2
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy Staging to S3
+          script:
+            - BRANCH_NAME=$(echo ${BITBUCKET_BRANCH} | sed "s/\//-/g")
+            - pipe: atlassian/aws-s3-deploy:1.6.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging-2/nl-editor-module/${BRANCH_NAME}'
+                LOCAL_PATH: 'dist'
+      - step:
+          name: Run cloudfront invalidate
+          script:
+            - BRANCH_NAME=$(echo ${BITBUCKET_BRANCH} | sed "s/\//-/g")
+            - pipe: atlassian/aws-cloudfront-invalidate:0.10.1
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                DISTRIBUTION_ID: 'E3UE766HJW73HA'
+                PATHS: '/build-store-beta/staging-2/nl-editor-module/${BRANCH_NAME}/assets/remoteEntry.js'
+    'main':
+      - step:
+          name: Build and Test (staging)
+          caches:
+            - node
+          script:
+            - npm install
+            - npm run build:staging
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy Staging to S3
+          script:
+            - pipe: atlassian/aws-s3-deploy:1.6.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging/nl-editor-module/main'
+                LOCAL_PATH: 'dist'
+      - step:
+          name: Run cloudfront invalidate
+          script:
+            - pipe: atlassian/aws-cloudfront-invalidate:0.10.1
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                DISTRIBUTION_ID: 'E3UE766HJW73HA'
+                PATHS: '/build-store-beta/staging/nl-editor-module/main/assets/remoteEntry.js'
+      - step:
+          name: Clean Dist Directory
+          script:
+            - rm -rf dist/*
+      - step:
+          name: Build and Test (staging-2)
+          caches:
+            - node
+          script:
+            - npm install
+            - npm run build:staging-2
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy Staging to S3
+          script:
+            - pipe: atlassian/aws-s3-deploy:1.6.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging-2/nl-editor-module/main'
+                LOCAL_PATH: 'dist'
+      - step:
+          name: Run cloudfront invalidate
+          script:
+            - pipe: atlassian/aws-cloudfront-invalidate:0.10.1
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                DISTRIBUTION_ID: 'E3UE766HJW73HA'
+                PATHS: '/build-store-beta/staging-2/nl-editor-module/main/assets/remoteEntry.js'
+  tags:
+    '*':
+      - step:
+          name: Check Branch and Version
+          caches:
+            - node
+          script:
+            - |
+              if [ $BITBUCKET_BRANCH != "main" ]; then
+                echo "Tag is not on the main branch. Aborting. ${BITBUCKET_BRANCH}";
+                exit 1;
+              fi
+            - PACKAGE_VERSION=$(npm run version --silent)
+            - |
+              if [ $PACKAGE_VERSION != $BITBUCKET_TAG ]; then
+                echo "Tag version (${BITBUCKET_TAG}) does not match package.json version (${PACKAGE_VERSION}). Aborting.";
+                exit 1;
+              fi
+            - echo "Tag is on the main branch and versions match. Proceeding with build and deployment."
+      - step:
+          name: Build Production
+          caches:
+            - node
+          script:
+            - npm install
+            - npm run build:production
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy Production to S3
+          script:
+            - pipe: atlassian/aws-s3-deploy:1.6.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                S3_BUCKET: 'gipper-static-assets/builds-store/nl-editor-module/v${BITBUCKET_TAG}'
+                LOCAL_PATH: 'dist'
+# image: node:16
+
+# pipelines:
+#   tags:
+#     '*':
+#       - step:
+#           name: Check Branch and Version
+#           caches:
+#             - node
+#           script:
+#             - |
+#               if [ $BITBUCKET_BRANCH != "main" ]; then
+#                 echo "Tag is not on the main branch. Aborting. ${BITBUCKET_BRANCH}";
+#                 exit 1;
+#               fi
+#             - PACKAGE_VERSION=$(npm run version --silent)
+#             - |
+#               if [ $PACKAGE_VERSION != $BITBUCKET_TAG ]; then
+#                 echo "Tag version (${BITBUCKET_TAG}) does not match package.json version (${PACKAGE_VERSION}). Aborting.";
+#                 exit 1;
+#               fi
+#             - echo "Tag is on the main branch and versions match. Proceeding with build and deployment."
+#       - step:
+#           name: Build and Test (staging)
+#           caches:
+#             - node
+#           script:
+#             - npm install
+#             - npm run build:mediatest
+#           artifacts:
+#             - dist/**
+#       - step:
+#           name: Deploy Staging to S3
+#           script:
+#             - pipe: atlassian/aws-s3-deploy:1.6.0
+#               variables:
+#                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+#                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+#                 AWS_DEFAULT_REGION: 'us-east-1'
+#                 S3_BUCKET: 'gipper-static-assets/builds-store/nl-editor-module/v${BITBUCKET_TAG}-beta'
+#                 LOCAL_PATH: 'dist'
+#       - step:
+#           name: Clean Dist Directory
+#           script:
+#             - rm -rf dist/*
+#       - step:
+#           name: Build Production
+#           caches:
+#             - node
+#           script:
+#             - npm install
+#             - npm run build:production
+#           artifacts:
+#             - dist/**
+#       - step:
+#           name: Deploy Production to S3
+#           script:
+#             - pipe: atlassian/aws-s3-deploy:1.6.0
+#               variables:
+#                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+#                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+#                 AWS_DEFAULT_REGION: 'us-east-1'
+#                 S3_BUCKET: 'gipper-static-assets/builds-store/nl-editor-module/v${BITBUCKET_TAG}'
+#                 LOCAL_PATH: 'dist'

@@ -6,7 +6,7 @@ import process from 'process';
 import packageJson from './package.json';
 
 const { version } = packageJson;
-const branchName = 'main';
+const branchName = 'epic-display-research';
 
 const awsLinks = () => {
   return {
@@ -47,10 +47,10 @@ export default defineConfig(() => {
     plugins: [
       react(),
       federation({
-        name: 'uiModule',
+        name: 'dsUiModule',
         filename: 'remoteEntry.js',
         exposes: {
-          TestHome: './src/pages/home/TestHome.jsx',
+          './TestHome': './src/pages/home/TestHome.jsx',
         },
         // remotes: remotes[buildENV],
         shared: ['react', 'react-dom', 'react-router-dom'],
