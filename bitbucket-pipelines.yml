@@ -21,7 +21,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
-                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging/nl-editor-module/${BRANCH_NAME}'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging/ds-ui-module/${BRANCH_NAME}'
                 LOCAL_PATH: 'dist'
       - step:
           name: Run cloudfront invalidate
@@ -33,7 +33,7 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
                 DISTRIBUTION_ID: 'E3UE766HJW73HA'
-                PATHS: '/build-store-beta/staging/nl-editor-module/${BRANCH_NAME}/assets/remoteEntry.js'
+                PATHS: '/build-store-beta/staging/ds-ui-module/${BRANCH_NAME}/assets/remoteEntry.js'
       - step:
           name: Clean Dist Directory
           script:
@@ -56,7 +56,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
-                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging-2/nl-editor-module/${BRANCH_NAME}'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging-2/ds-ui-module/${BRANCH_NAME}'
                 LOCAL_PATH: 'dist'
       - step:
           name: Run cloudfront invalidate
@@ -68,7 +68,7 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
                 DISTRIBUTION_ID: 'E3UE766HJW73HA'
-                PATHS: '/build-store-beta/staging-2/nl-editor-module/${BRANCH_NAME}/assets/remoteEntry.js'
+                PATHS: '/build-store-beta/staging-2/ds-ui-module/${BRANCH_NAME}/assets/remoteEntry.js'
     'main':
       - step:
           name: Build and Test (staging)
@@ -87,7 +87,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
-                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging/nl-editor-module/main'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging/ds-ui-module/main'
                 LOCAL_PATH: 'dist'
       - step:
           name: Run cloudfront invalidate
@@ -98,7 +98,7 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
                 DISTRIBUTION_ID: 'E3UE766HJW73HA'
-                PATHS: '/build-store-beta/staging/nl-editor-module/main/assets/remoteEntry.js'
+                PATHS: '/build-store-beta/staging/ds-ui-module/main/assets/remoteEntry.js'
       - step:
           name: Clean Dist Directory
           script:
@@ -120,7 +120,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
-                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging-2/nl-editor-module/main'
+                S3_BUCKET: 'gipper-static-assets/build-store-beta/staging-2/ds-ui-module/main'
                 LOCAL_PATH: 'dist'
       - step:
           name: Run cloudfront invalidate
@@ -131,7 +131,7 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
                 DISTRIBUTION_ID: 'E3UE766HJW73HA'
-                PATHS: '/build-store-beta/staging-2/nl-editor-module/main/assets/remoteEntry.js'
+                PATHS: '/build-store-beta/staging-2/ds-ui-module/main/assets/remoteEntry.js'
   tags:
     '*':
       - step:
@@ -168,7 +168,7 @@ pipelines:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: 'us-east-1'
-                S3_BUCKET: 'gipper-static-assets/builds-store/nl-editor-module/v${BITBUCKET_TAG}'
+                S3_BUCKET: 'gipper-static-assets/builds-store/ds-ui-module/v${BITBUCKET_TAG}'
                 LOCAL_PATH: 'dist'
 # image: node:16
 
@@ -209,7 +209,7 @@ pipelines:
 #                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
 #                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
 #                 AWS_DEFAULT_REGION: 'us-east-1'
-#                 S3_BUCKET: 'gipper-static-assets/builds-store/nl-editor-module/v${BITBUCKET_TAG}-beta'
+#                 S3_BUCKET: 'gipper-static-assets/builds-store/ds-ui-module/v${BITBUCKET_TAG}-beta'
 #                 LOCAL_PATH: 'dist'
 #       - step:
 #           name: Clean Dist Directory
@@ -232,5 +232,5 @@ pipelines:
 #                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
 #                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
 #                 AWS_DEFAULT_REGION: 'us-east-1'
-#                 S3_BUCKET: 'gipper-static-assets/builds-store/nl-editor-module/v${BITBUCKET_TAG}'
+#                 S3_BUCKET: 'gipper-static-assets/builds-store/ds-ui-module/v${BITBUCKET_TAG}'
 #                 LOCAL_PATH: 'dist'
