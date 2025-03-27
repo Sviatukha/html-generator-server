@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: html-generator-server
+    env: node
+    buildCommand: echo "Skipping build step"
+    startCommand: npm run server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NPM_CONFIG_PRODUCTION
+        value: false

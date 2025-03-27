@@ -16,7 +16,8 @@
     "storybook-docs": "storybook dev --docs",
     "build-storybook-docs": "storybook build --docs",
     "version": "echo $npm_package_version",
-    "server": "node server/index.js"
+    "devServer": "node server/index.js",
+    "server": "NODE_ENV=production node server/index.js"
   },
   "dependencies": {
     "express": "^4.21.2",
