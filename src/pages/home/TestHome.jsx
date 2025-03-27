@@ -1,5 +1,5 @@
-const TestHome = () => {
-  return <div>TestHome</div>;
+const TestHome = ({ content }) => {
+  return <div>{content}</div>;
 };
 
 export default TestHome;
